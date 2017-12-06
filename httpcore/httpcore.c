@@ -39,7 +39,84 @@ static void unimplemented( int );
 void accept_request( void* arg )
 {
 	int client = *( (int*)arg ); // 这个arg参数是一个表示连接的socket文件描述符
-	headers(client, NULL);
+	char buf[1024];
+	int numchars;
+	char method[255];
+	char url[255];
+	char path[512];
+	size_t i, j;
+	struct stat st; // stat是用来描述一个linux系统文件系统中的文件属性的结构
+	int cgi = 0;      /* becomes true if server decides this is a CGI 如果是1，则代表是一个CGI
+			  * program */
+	char *query_string = NULL;
+
+	numchars = get_line( client, buf, sizeof( buf ) ); // 读取对端发送的数据
+	printf( "%s", buf );
+	i = 0; j = 0;
+
+	while ( !ISspace( buf[j] ) && ( i < sizeof(method)-1 ) )
+	{
+		method[i] = buf[j];
+		i++; j++;
+	}
+	method[i] = '\0';
+
+	if ( strcasecmp( method, "GET" ) && strcasecmp( method, "POST" ) ) // 如果请求的方法既不是GET也不是POST
+	{
+		unimplemented( client );
+		return;
+	}
+
+	if ( strcasecmp( method, "POST" ) == 0 ) // 如果请求的方法是POST
+		cgi = 1;
+
+	i = 0;
+	while ( ISspace( buf[j] ) && ( j < sizeof( buf ) ) )
+		j++;
+	while ( !ISspace( buf[j] ) && ( i < sizeof(url)-1 ) && ( j < sizeof( buf ) ) )
+	{
+		url[i] = buf[j];
+		i++; j++;
+	}
+	url[i] = '\0';
+
+	if ( strcasecmp( method, "GET" ) == 0 )
+	{
+		query_string = url;
+		while ( ( *query_string != '?' ) && ( *query_string != '\0' ) )
+			query_string++;
+		if ( *query_string == '?' )
+		{
+			cgi = 1;
+			*query_string = '\0';
+			query_string++;
+		}
+	}
+
+	sprintf( path, "htdocs%s", url );
+	if ( path[strlen( path ) - 1] == '/' )
+		strcat( path, "index.html" );
+	if ( stat( path, &st ) == -1 ) {
+		while ( ( numchars > 0 ) && strcmp( "\n", buf ) ){  /* read & discard headers */
+			numchars = get_line( client, buf, sizeof( buf ) );
+			printf( "%s", buf );
+		}
+		not_found( client );
+	} else
+	{
+		if ( ( st.st_mode & S_IFMT ) == S_IFDIR )
+			strcat( path, "/index.html" );
+		if ( ( st.st_mode & S_IXUSR ) ||
+			( st.st_mode & S_IXGRP ) ||
+			( st.st_mode & S_IXOTH ) )
+			cgi = 1;
+		if ( !cgi )
+			serve_file( client, path );
+		else
+			execute_cgi( client, path, method, query_string );
+	}
+
+	close( client );
 }
 
 /**********************************************************************/
