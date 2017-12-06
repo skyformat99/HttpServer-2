@@ -60,6 +60,7 @@ int main( int argc, char const *argv[] ) {
         	if(events[i].data.fd == server_sock) { // 说明有新的客户端连接到来了
                 client_sock = accept( server_sock, ( struct sockaddr * )&client_name, &client_name_len );
                 printf("%d\n", client_sock);
+                printf("here\n");
                 if ( client_sock == -1 ) {
 					printf("error_die(accept)");
 					error_die( "accept" );
