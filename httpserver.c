@@ -66,7 +66,7 @@ int main( int argc, char const *argv[] ) {
 
 				setnonblocking(client_sock);
                 // 往线程池中的任务队列里面添加任务
-            	if ( threadpool_add( pool, &accept_request, (void*)&events[i].data.fd, 0 ) != 0 ) { // 添加一个任务到线程池结构中的任务队列里面
+            	if ( threadpool_add( pool, &accept_request, (void*)&client_sock, 0 ) != 0 ) { // 添加一个任务到线程池结构中的任务队列里面
 					printf( "Job add error." );
 				}
         	}
