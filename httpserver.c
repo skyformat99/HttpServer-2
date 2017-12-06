@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <sys/socket.h>
 #include <sys/epoll.h>
+#include <fcntl.h>
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
