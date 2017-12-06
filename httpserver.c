@@ -65,16 +65,11 @@ int main( int argc, char const *argv[] ) {
 				}
 
 				setnonblocking(client_sock);
-                ev.data.fd = client_sock;
-                ev.events = EPOLLOUT | EPOLLET; // 设置监听的事件(当可以往客户端发送数据的时候)
-                epoll_ctl(epfd, EPOLL_CTL_ADD, client_sock, &ev);
-        	}
-            else if (events[i].events & EPOLLOUT) { // 当可以给客户端发送数据的时候
-            	// 往线程池中的任务队列里面添加任务
+                // 往线程池中的任务队列里面添加任务
             	if ( threadpool_add( pool, &accept_request, (void*)&events[i].data.fd, 0 ) != 0 ) { // 添加一个任务到线程池结构中的任务队列里面
 					printf( "Job add error." );
 				}
-            }
+        	}
         }
 	}
 
