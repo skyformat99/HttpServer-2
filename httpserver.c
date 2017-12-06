@@ -54,8 +54,9 @@ int main( int argc, char const *argv[] ) {
 
 	while ( 1 ) {
 		nfds = epoll_wait(epfd, events, 20, 500);
-
-        for (int i = 0; i < nfds; ++i) {
+        
+        int i;
+        for (i = 0; i < nfds; ++i) {
         	if(events[i].data.fd == server_sock) { // 说明有新的客户端连接到来了
                 client_sock = accept( server_sock, ( struct sockaddr * )&client_name, &client_name_len );
                 if ( client_sock == -1 ) {
