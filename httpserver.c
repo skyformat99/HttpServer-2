@@ -46,7 +46,7 @@ int main( int argc, char const *argv[] ) {
 	int nfds = 0; // 用来接收epoll_wait的返回值，表示非阻塞的文件描述符的数量
 
     epfd = epoll_create(256);
-    setnonblocking(server_sock);
+    // setnonblocking(server_sock);
     ev.data.fd = server_sock;
     ev.events = EPOLLIN|EPOLLET; // 当绑定的那个socket文件描述符可读的时候，就触发事件
     epoll_ctl(epfd, EPOLL_CTL_ADD, server_sock, &ev); // 把绑定的按个socket文件描述符添加到内核的红黑树里面
