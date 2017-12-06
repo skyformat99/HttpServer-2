@@ -59,13 +59,13 @@ int main( int argc, char const *argv[] ) {
         for (i = 0; i < nfds; ++i) {
         	if(events[i].data.fd == server_sock) { // 说明有新的客户端连接到来了
                 client_sock = accept( server_sock, ( struct sockaddr * )&client_name, &client_name_len );
+                printf("%d\n", client_sock);
                 if ( client_sock == -1 ) {
 					printf("error_die(accept)");
 					error_die( "accept" );
 				}
 
 				setnonblocking(client_sock);
-				printf("haha\n");
                 // 往线程池中的任务队列里面添加任务
             	if ( threadpool_add( pool, &accept_request, (void*)&client_sock, 0 ) != 0 ) { // 添加一个任务到线程池结构中的任务队列里面
 					printf( "Job add error." );
