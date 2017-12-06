@@ -51,7 +51,7 @@ void accept_request( void* arg )
 	char *query_string = NULL;
 
 	numchars = get_line( client, buf, sizeof( buf ) ); // 读取对端发送的数据
-	printf( "%s", buf );
+	// printf( "%s", buf );
 	i = 0; j = 0;
 
 	while ( !ISspace( buf[j] ) && ( i < sizeof(method)-1 ) )
@@ -63,7 +63,7 @@ void accept_request( void* arg )
 
 	if ( strcasecmp( method, "GET" ) && strcasecmp( method, "POST" ) ) // 如果请求的方法既不是GET也不是POST
 	{
-		unimplemented( client );
+		// unimplemented( client );
 		return;
 	}
 
