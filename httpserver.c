@@ -54,7 +54,6 @@ int main( int argc, char const *argv[] ) {
 
 	while ( 1 ) {
 		nfds = epoll_wait(epfd, events, 20, 500);
-		printf("有%d个请求到来\n", nfds);
         
         int i;
         for (i = 0; i < nfds; ++i) {
@@ -66,6 +65,7 @@ int main( int argc, char const *argv[] ) {
 				}
 
 				setnonblocking(client_sock);
+				printf("haha\n");
                 // 往线程池中的任务队列里面添加任务
             	if ( threadpool_add( pool, &accept_request, (void*)&client_sock, 0 ) != 0 ) { // 添加一个任务到线程池结构中的任务队列里面
 					printf( "Job add error." );
